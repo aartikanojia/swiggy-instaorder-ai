@@ -53,12 +53,33 @@ The assistant may suggest items and carts, but backend policy checks must enforc
 
 ## Current Status
 
-This repository is in the documentation and access-application phase. It defines the intended architecture, safety boundaries, and implementation roadmap for a backend-first prototype.
+This repository now includes the initial documentation and mock-first FastAPI backend foundation. Real Swiggy MCP calls remain disabled until official access is approved.
+
+## Backend Quickstart
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+uvicorn app.main:app --app-dir backend --reload
+```
+
+Health check:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+Run tests:
+
+```bash
+python -m pytest
+```
 
 ## Planned Phases
 
-1. Documentation and access application.
-2. Mock FastAPI backend with mock food and Instamart tools.
+1. Documentation and access application. Complete.
+2. Mock FastAPI backend with mock food and Instamart tools. In progress.
 3. Agent flow for intent parsing, cart preparation, review, and confirmation.
 4. MCP adapter boundary for swapping mock tools with real Swiggy MCP calls.
 5. Real Swiggy MCP integration after access approval.
