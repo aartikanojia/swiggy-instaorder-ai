@@ -1,10 +1,10 @@
 from app.adapters import mock_swiggy_tools
-from app.models.cart import Workflow
+from app.models.cart import CartItemType
 
 
 def test_mock_tools_create_review_checkout_and_track() -> None:
-    cart = mock_swiggy_tools.create_cart(Workflow.food)
-    cart = mock_swiggy_tools.add_item_to_cart(cart.cart_id, "food-paneer-bowl", 1)
+    cart = mock_swiggy_tools.create_cart("user-1")
+    cart = mock_swiggy_tools.add_item_to_cart(cart.cart_id, "food-paneer-bowl", CartItemType.food, 1)
     cart = mock_swiggy_tools.review_cart(cart.cart_id)
 
     assert cart.total > 0
