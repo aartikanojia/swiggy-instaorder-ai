@@ -1,9 +1,23 @@
 from app.adapters import mock_swiggy_tools
+from app.adapters.swiggy_mcp_client import MockSwiggyMcpClient, RealSwiggyMcpClient, SwiggyMcpClient
+from app.core.config import get_settings
 from app.models.cart import Cart, CartItem, MockOrder, Workflow
 
 
 class SwiggyMcpAdapter:
     """Adapter boundary for mock tools now and real Swiggy MCP later."""
+
+    def __init__(self, client: SwiggyMcpClient | None = None) -> None:
+        self.client = client or self._default_client()
+
+    def _default_client(self) -> SwiggyMcpClient:
+        settings = get_settings()
+        if settings.mode == "real":
+            return RealSwiggyMcpClient(
+                food_endpoint=settings.swiggy_food_mcp_url,
+                instamart_endpoint=settings.swiggy_instamart_mcp_url,
+            )
+        return MockSwiggyMcpClient()
 
     def search_food(
         self,
@@ -12,7 +26,7 @@ class SwiggyMcpAdapter:
         cuisine: str | None = None,
         veg_only: bool = False,
     ) -> list[dict]:
-        return mock_swiggy_tools.search_food(query=query, budget=budget, cuisine=cuisine, veg_only=veg_only)
+        return self.client.search_food(query=query, budget=budget, cuisine=cuisine, veg_only=veg_only)
 
     def search_instamart_items(
         self,
@@ -20,7 +34,7 @@ class SwiggyMcpAdapter:
         category: str | None = None,
         max_price: int | None = None,
     ) -> list[dict]:
-        return mock_swiggy_tools.search_instamart_items(query=query, category=category, max_price=max_price)
+        return self.client.search_instamart_items(query=query, category=category, max_price=max_price)
 
     def create_cart(self, workflow: Workflow) -> Cart:
         return mock_swiggy_tools.create_cart(workflow)
