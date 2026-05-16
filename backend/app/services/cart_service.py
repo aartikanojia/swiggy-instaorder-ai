@@ -27,10 +27,10 @@ class CartService:
         cart = self.create_cart(workflow)
 
         if intent.intent == IntentName.instamart_search:
-            items = self.adapter.search_instamart_items(intent.query, intent.budget)
+            items = self.adapter.search_instamart_items(query=intent.query, max_price=intent.budget)
         else:
-            items = self.adapter.search_food(intent.query, intent.budget)
+            items = self.adapter.search_food(query=intent.query, budget=intent.budget)
 
         for item in items[:3]:
-            cart = self.add_item(cart.cart_id, item.item_id, 1)
+            cart = self.add_item(cart.cart_id, item["id"], 1)
         return self.review_cart(cart.cart_id)

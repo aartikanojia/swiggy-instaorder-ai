@@ -26,3 +26,21 @@ class CheckoutResponse(BaseModel):
 
 class OrderResponse(MockOrder):
     pass
+
+
+class FoodSearchResult(BaseModel):
+    id: str
+    name: str
+    cuisine: str
+    price: int
+    availability: bool
+    source: str = "mock"
+
+
+class InstamartSearchResult(BaseModel):
+    id: str
+    name: str
+    category: str
+    price: int
+    availability: bool
+    source: str = "mock"

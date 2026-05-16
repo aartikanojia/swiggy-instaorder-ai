@@ -1,35 +1,84 @@
+import json
 from itertools import count
+from pathlib import Path
 
 from app.models.cart import Cart, CartItem, CartStatus, MockOrder, OrderStatus, Workflow
 
 _cart_counter = count(1)
 _order_counter = count(1)
 
-FOOD_ITEMS = {
-    "food-paneer-bowl": CartItem(item_id="food-paneer-bowl", name="Paneer protein bowl", quantity=1, unit_price=249),
-    "food-snack-combo": CartItem(item_id="food-snack-combo", name="Evening snacks combo", quantity=1, unit_price=199),
-    "food-healthy-thali": CartItem(item_id="food-healthy-thali", name="Healthy dinner thali", quantity=1, unit_price=289),
-    "food-sprout-chaat": CartItem(item_id="food-sprout-chaat", name="High-protein sprout chaat", quantity=1, unit_price=149),
-}
+DATA_DIR = Path(__file__).resolve().parents[1] / "data"
+FOOD_DATA: list[dict] = json.loads((DATA_DIR / "mock_food.json").read_text(encoding="utf-8"))
+INSTAMART_DATA: list[dict] = json.loads((DATA_DIR / "mock_instamart.json").read_text(encoding="utf-8"))
 
+FOOD_ITEMS = {
+    item["id"]: CartItem(item_id=item["id"], name=item["name"], quantity=1, unit_price=item["price"])
+    for item in FOOD_DATA
+}
 INSTAMART_ITEMS = {
-    "im-milk": CartItem(item_id="im-milk", name="Milk 1L", quantity=1, unit_price=68),
-    "im-eggs": CartItem(item_id="im-eggs", name="Eggs pack of 6", quantity=1, unit_price=84),
-    "im-bread": CartItem(item_id="im-bread", name="Whole wheat bread", quantity=1, unit_price=55),
-    "im-fruits": CartItem(item_id="im-fruits", name="Seasonal fruit pack", quantity=1, unit_price=179),
-    "im-protein-snack": CartItem(item_id="im-protein-snack", name="Roasted chana snack", quantity=1, unit_price=65),
+    item["id"]: CartItem(item_id=item["id"], name=item["name"], quantity=1, unit_price=item["price"])
+    for item in INSTAMART_DATA
 }
 
 CARTS: dict[str, Cart] = {}
 ORDERS: dict[str, MockOrder] = {}
 
 
-def search_food(query: str, budget: int | None = None) -> list[CartItem]:
-    return _filter_items(list(FOOD_ITEMS.values()), query, budget)
+def search_food(
+    query: str = "",
+    budget: int | None = None,
+    cuisine: str | None = None,
+    veg_only: bool = False,
+) -> list[dict]:
+    terms = _to_terms(query)
+    filtered = []
+    for item in FOOD_DATA:
+        if budget is not None and item["price"] > budget:
+            continue
+        if cuisine and item["cuisine"].lower() != cuisine.lower():
+            continue
+        if veg_only and not item["veg"]:
+            continue
+        if terms and not _matches_terms(item["name"], terms):
+            continue
+        filtered.append(
+            {
+                "id": item["id"],
+                "name": item["name"],
+                "cuisine": item["cuisine"],
+                "price": item["price"],
+                "availability": item["availability"],
+                "source": "mock",
+            }
+        )
+    return filtered
 
 
-def search_instamart_items(query: str, budget: int | None = None) -> list[CartItem]:
-    return _filter_items(list(INSTAMART_ITEMS.values()), query, budget)
+def search_instamart_items(
+    query: str = "",
+    category: str | None = None,
+    max_price: int | None = None,
+) -> list[dict]:
+    terms = _to_terms(query)
+    filtered = []
+    for item in INSTAMART_DATA:
+        if category and item["category"].lower() != category.lower():
+            continue
+        if max_price is not None and item["price"] > max_price:
+            continue
+        if terms and not _matches_terms(item["name"], terms):
+            continue
+        filtered.append(
+            {
+                "id": item["id"],
+                "name": item["name"],
+                "category": item["category"],
+                "price": item["price"],
+                "availability": item["availability"],
+                "source": "mock",
+            }
+        )
+    return filtered
 
 
 def create_cart(workflow: Workflow) -> Cart:
@@ -95,15 +144,13 @@ def track_order_mock(order_id: str | None = None) -> MockOrder:
     return MockOrder(order_id="mock-order-demo", cart_id="mock-cart-demo", status=OrderStatus.out_for_delivery)
 
 
-def _filter_items(items: list[CartItem], query: str, budget: int | None) -> list[CartItem]:
-    terms = [term for term in query.lower().replace(",", " ").split() if len(term) > 2]
-    results = [
-        item for item in items if not budget or item.unit_price <= budget
-    ]
-    matched = [
-        item for item in results if any(term in item.name.lower() for term in terms)
-    ]
-    return matched or results[:3]
+def _to_terms(query: str) -> list[str]:
+    return [term for term in query.lower().replace(",", " ").split() if len(term) > 1]
+
+
+def _matches_terms(name: str, terms: list[str]) -> bool:
+    lowered = name.lower()
+    return any(term in lowered for term in terms)
 
 
 def _get_cart(cart_id: str) -> Cart:
