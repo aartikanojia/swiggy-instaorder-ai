@@ -5,11 +5,22 @@ from app.models.cart import Cart, CartItem, MockOrder, Workflow
 class SwiggyMcpAdapter:
     """Adapter boundary for mock tools now and real Swiggy MCP later."""
 
-    def search_food(self, query: str, budget: int | None = None) -> list[CartItem]:
-        return mock_swiggy_tools.search_food(query, budget)
+    def search_food(
+        self,
+        query: str = "",
+        budget: int | None = None,
+        cuisine: str | None = None,
+        veg_only: bool = False,
+    ) -> list[dict]:
+        return mock_swiggy_tools.search_food(query=query, budget=budget, cuisine=cuisine, veg_only=veg_only)
 
-    def search_instamart_items(self, query: str, budget: int | None = None) -> list[CartItem]:
-        return mock_swiggy_tools.search_instamart_items(query, budget)
+    def search_instamart_items(
+        self,
+        query: str = "",
+        category: str | None = None,
+        max_price: int | None = None,
+    ) -> list[dict]:
+        return mock_swiggy_tools.search_instamart_items(query=query, category=category, max_price=max_price)
 
     def create_cart(self, workflow: Workflow) -> Cart:
         return mock_swiggy_tools.create_cart(workflow)

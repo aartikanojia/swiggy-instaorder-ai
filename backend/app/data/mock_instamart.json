@@ -1,0 +1,37 @@
+[
+  {
+    "id": "im-milk",
+    "name": "Milk 1L",
+    "category": "Dairy",
+    "price": 68,
+    "availability": true
+  },
+  {
+    "id": "im-eggs",
+    "name": "Eggs Pack of 6",
+    "category": "Dairy",
+    "price": 84,
+    "availability": true
+  },
+  {
+    "id": "im-bread",
+    "name": "Whole Wheat Bread",
+    "category": "Bakery",
+    "price": 55,
+    "availability": true
+  },
+  {
+    "id": "im-fruits",
+    "name": "Seasonal Fruit Pack",
+    "category": "Fruits",
+    "price": 179,
+    "availability": true
+  },
+  {
+    "id": "im-roasted-chana",
+    "name": "Roasted Chana",
+    "category": "Snacks",
+    "price": 65,
+    "availability": false
+  }
+]

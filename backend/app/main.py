@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.routes import assistant, cart, health, orders
+from app.api.routes import assistant, cart, food, health, instamart, orders
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 
@@ -17,6 +17,8 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(assistant.router, prefix="/api/v1")
     app.include_router(cart.router, prefix="/api/v1")
+    app.include_router(food.router, prefix="/api/v1")
+    app.include_router(instamart.router, prefix="/api/v1")
     app.include_router(orders.router, prefix="/api/v1")
     return app
 

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "food-paneer-bowl",
+    "name": "Paneer Protein Bowl",
+    "cuisine": "North Indian",
+    "category": "Bowl",
+    "price": 249,
+    "availability": true,
+    "veg": true
+  },
+  {
+    "id": "food-chicken-salad",
+    "name": "Grilled Chicken Salad",
+    "cuisine": "Continental",
+    "category": "Salad",
+    "price": 289,
+    "availability": true,
+    "veg": false
+  },
+  {
+    "id": "food-veg-thali",
+    "name": "Healthy Veg Thali",
+    "cuisine": "Indian",
+    "category": "Thali",
+    "price": 219,
+    "availability": true,
+    "veg": true
+  },
+  {
+    "id": "food-sprout-chaat",
+    "name": "Sprout Chaat",
+    "cuisine": "Street Food",
+    "category": "Snack",
+    "price": 149,
+    "availability": false,
+    "veg": true
+  },
+  {
+    "id": "food-biryani",
+    "name": "Chicken Biryani",
+    "cuisine": "Mughlai",
+    "category": "Main Course",
+    "price": 329,
+    "availability": true,
+    "veg": false
+  }
+]
