@@ -22,14 +22,16 @@ def test_assistant_prepares_mock_cart() -> None:
     payload = response.json()
     assert response.status_code == 200
     assert payload["requires_confirmation"] is True
-    assert payload["cart"]["mock"] is True
-    assert payload["cart"]["workflow"] == "instamart"
+    assert payload["cart"]["source"] == "mock"
 
 
 def test_checkout_requires_confirmation() -> None:
-    create_response = client.post("/api/v1/cart", json={"workflow": "food"})
+    create_response = client.post("/api/v1/cart", json={"user_id": "user-1"})
     cart_id = create_response.json()["cart_id"]
-    client.post(f"/api/v1/cart/{cart_id}/items", json={"item_id": "food-paneer-bowl", "quantity": 1})
+    client.post(
+        f"/api/v1/cart/{cart_id}/items",
+        json={"item_id": "food-paneer-bowl", "item_type": "food", "quantity": 1},
+    )
 
     checkout_response = client.post(
         "/api/v1/orders/checkout",

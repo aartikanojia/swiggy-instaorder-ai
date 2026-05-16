@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from app.models.cart import Workflow
+from app.models.cart import CartItemType, Workflow
 
 
 class AssistantRequest(BaseModel):
@@ -9,7 +9,17 @@ class AssistantRequest(BaseModel):
 
 
 class CreateCartRequest(BaseModel):
-    workflow: Workflow
+    user_id: str = Field(min_length=1)
+
+
+class AddCartItemRequest(BaseModel):
+    item_id: str = Field(min_length=1)
+    item_type: CartItemType
+    quantity: int = Field(default=1, ge=1, le=20)
+
+
+class UpdateCartItemRequest(BaseModel):
+    quantity: int = Field(ge=1, le=20)
 
 
 class AddItemRequest(BaseModel):
@@ -19,6 +29,10 @@ class AddItemRequest(BaseModel):
 
 class RemoveItemRequest(BaseModel):
     quantity: int | None = Field(default=None, ge=1, le=20)
+
+
+class CreateLegacyCartRequest(BaseModel):
+    workflow: Workflow
 
 
 class ApplyCouponRequest(BaseModel):
